@@ -3,19 +3,23 @@ import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Qr from "./Qr";
+import { useAppState } from "../context/appContext";
 
 const ModalBuyEntrada = ({ id, handleClose }) => {
   const [qr, setQr] = useState(null);
-  useEffect(()=>{
-    setQr(null)
-  },[id])
+  const { addEntrada } = useAppState();
+
+  useEffect(() => {
+    setQr(null);
+  }, [id]);
   const confirmarCompra = async () => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_URI_API}api/entradas/generar-qr`,
         { eventoId: id }
       );
-      setQr(response.data.qrCodeBase64);
+      addEntrada(response.data);
+      setQr(response.data.qr);
     } catch (error) {
       console.error(error);
     }
@@ -35,9 +39,9 @@ const ModalBuyEntrada = ({ id, handleClose }) => {
         {qr == null ? (
           "Esta seguro que quieres comprar esta entrada?"
         ) : (
-            <div className="d-flex justify-content-center">
-                <Qr qrCodeBase64={qr} />
-            </div>
+          <div className="d-flex justify-content-center">
+            <Qr qrCodeBase64={qr} />
+          </div>
         )}
       </Modal.Body>
       <Modal.Footer>

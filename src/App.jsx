@@ -8,11 +8,12 @@ import { useState } from "react";
 import ModalBuyEntrada from "./components/ModalBuyEntrada";
 import TabsMenu from "./components/TabsMenu";
 import Qr from "./components/Qr";
+import UploadQr from "./components/UploadQr";
 
 function App() {
   const { state } = useAppState();
   const [idEvento, setIdEvento] = useState(null);
-  const [tabs, setTabs] = useState('eventos')
+  const [tabs, setTabs] = useState("eventos");
   const buyEntrada = (id) => {
     setIdEvento(id);
   };
@@ -36,48 +37,46 @@ function App() {
               setIdEvento(null);
             }}
           />
-        ) }
-          <TabsMenu setTabs={setTabs} tab={tabs} />
-       {tabs == 'eventos' && <Row>
-          {state.eventoList.map((evento) => {
-            return (
-              <Card key={evento.id}>
-                <Card.Header>{evento.nombre}</Card.Header>
-                <Card.Body>
-                  <Card.Title>{evento.estado}</Card.Title>
+        )}
+        <TabsMenu setTabs={setTabs} tab={tabs} />
+        {tabs == "eventos" && (
+          <Row>
+            {state.eventoList.map((evento) => {
+              return (
+                <Card key={evento.id}>
+                  <Card.Header>{evento.nombre}</Card.Header>
+                  <Card.Body>
+                    <Card.Title>{evento.estado}</Card.Title>
 
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      buyEntrada(evento.id);
-                    }}
-                  >
-                    Comprar entrada
-                  </Button>
-                </Card.Body>
-              </Card>
-            );
-          })}
-        </Row>}
-        {
-          tabs == 'entradas' &&
-        <Row>
-          {state.entradaList.map((entrada) => {
-            const data = new Uint8Array(entrada.qr.data);
-            const buffer = data.buffer;
-            const base64String = btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)));
-            return (
-              <Card key={entrada.id}>
-                <Card.Header>Evento: {entrada.Evento.nombre}</Card.Header>
-                <Card.Body>
-                  <Card.Title>{entrada.Evento.estado}</Card.Title>
-                  <Qr qrCodeBase64={base64String} />
-                </Card.Body>
-              </Card>
-            );
-          })}
-        </Row>
-        }
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        buyEntrada(evento.id);
+                      }}
+                    >
+                      Comprar entrada
+                    </Button>
+                  </Card.Body>
+                </Card>
+              );
+            })}
+          </Row>
+        )}
+        {tabs == "entradas" && (
+          <Row>
+            {state.entradaList.map((entrada) => {
+              return (
+                <Card key={entrada.id}>
+                  <Card.Header>Evento: {entrada.Evento.nombre}</Card.Header>
+                  <Card.Body>
+                    <Card.Title>{entrada.Evento.estado}</Card.Title>
+                    <Qr qrCodeBase64={entrada.qr} />
+                  </Card.Body>
+                </Card>
+              );
+            })}
+          </Row>
+        )}
       </div>
     </>
   );
